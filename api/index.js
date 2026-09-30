@@ -1,5 +1,10 @@
 const express = require("express");
 
+// Explicit imports ensure Vercel includes these transitive runtime dependencies
+// used by the SnapSave downloader.
+require("axios");
+require("cheerio");
+
 const app = express();
 
 app.get("/", (req, res) => {
@@ -18,10 +23,7 @@ app.get("/igdl", async (req, res) => {
       return res.status(400).json({ error: "URL parameter is missing" });
     }
 
-    // Load the downloader lazily so the health/root route can still boot
-    // even if the third-party scraper has a runtime compatibility issue.
     const snapsave = require("../snapsave-downloader/src/index");
-
     const downloadedURL = await snapsave(url);
 
     return res.status(200).json({ url: downloadedURL });
